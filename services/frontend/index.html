@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Zero Trust Platform</title>
+</head>
+<body>
+    <h1>Zero Trust Platform</h1>
+    <button onclick="callApi()">Call API</button>
+
+    <p id="result"></p>
+
+    <script>
+        async function callApi() {
+            const res = await fetch("http://localhost:5000/hello");
+            const data = await res.text();
+            document.getElementById("result").innerText = data;
+        }
+    </script>
+</body>
+</html>

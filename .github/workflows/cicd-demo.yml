@@ -1,0 +1,46 @@
+name: Zerotrust CICD Demo
+
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: build docker image
+        run: |
+          docker build -t demo-zero-trust:latest .
+      - name: Scan Docker image (demo)
+        run: |
+          echo "🔍 Scanning Docker image for vulnerabilities (demo)"
+          echo "trivy image demo-zero-trust:latest --exit-code 0"
+
+      - name: List docker images
+        run: docker images
+      
+      - name: log in to aws ECR
+        env:
+          WAS_REGION: us-east-1
+        run: |
+          aws ecr get-login-password --region $AWS_REGION | \
+          docker login --username AWS --password-stdin *********.dkr.ecr.$AWS_REGION.amazonaws.com
+      - name: Tag Docker image for ECR
+        run: |
+          docker tag demo-zero-trust:latest *********.dkr.ecr.us-east-1.amazonaws.com/demo-zero-trust:latest
+      - name: Push Docker image to ECR
+        run: |
+          docker push *********.dkr.ecr.us-east-1.amazonaws.com/demo-zero-trust:latest
+
+      - name: Deploy to Kubernetes (Demo)
+        run: |
+          echo "This is a demo deployment step"
+          echo "kubectl apply -f k8s/deployment.yaml --record"
+        
+
+      
+
+      
